@@ -7,8 +7,46 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
+        $user = $request->input('user');
+        $course = $request->input('course');
+
+        $order = Order::create([
+            'user_id' => $user['id'],
+            'course_id' => $course['id'],
+        ]);
+
+        $transactionDetails = [
+            'order_id' => $order->id,
+            'gross_amount' => $course['price'],
+        ];
+
+        $itemDetails = [
+            [
+                'id' => $course['id'],
+                'price' => $course['price'],
+                'quantity' => 1,
+                'name' => $course['name'],
+                'brand' => 'SERA Corp',
+                'category' => 'Transportation'
+            ],
+        ];
+
+        $customerDetails = [
+            'first_name' => $user['name'],
+            'email' => $user['email']
+        ];
+
+        $midtransParams = [
+            'transaction_details' => $transactionDetails,
+            'item_details' => $itemDetails,
+            'customer_details' => $customerDetails,
+        ];
+
+        $midtransSnapUrl = $this->getMidtransSnapUrl($midtransParams);
+        return $midtransSnapUrl;
+        // return response()->json($order);
     }
 
     private function getMidtransSnapUrl($params)
