@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('payment_logs', function (Blueprint $table) {
             $table->id();
             $table->string('status');
-            $table->string('payment-tye');
+            $table->string('payment_type');
             $table->json('raw_response');
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
             $table->timestamps();
